@@ -324,7 +324,7 @@ ON DUPLICATE KEY UPDATE name=name;
 
 SET @role_id = (SELECT id FROM roles WHERE name = 'admin' LIMIT 1);
 
-INSERT INTO users (username, email, password, first_name, last_name, role_id, is_active, created_at)
+INSERT INTO users (username, email, password_hash, first_name, last_name, role_id, is_active, created_at)
 VALUES ('$ADMIN_USER', '$ADMIN_EMAIL', '$HASHED_PASS', '$ADMIN_FIRST', '$ADMIN_LAST', @role_id, 1, NOW())
 ON DUPLICATE KEY UPDATE email='$ADMIN_EMAIL';
 EOF

@@ -16,7 +16,14 @@
       "Bash(find:*)",
       "Bash(chmod:*)",
       "Bash(git init:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nInitial commit - aReports Call Center Analytics Platform\n\nFeatures:\n- Real-time dashboard with queue and agent monitoring\n- CDR analysis and call recordings\n- Agent performance reports\n- Queue statistics and SLA tracking\n- Quality monitoring with evaluation forms\n- Campaign management\n- Alert system with email and Telegram notifications\n- Scheduled reports \\(PDF/Excel/CSV\\)\n- REST API with authentication\n- WebSocket server for real-time updates\n- Role-based access control\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git config:*)",
+      "Bash(ssh-keygen:*)",
+      "Bash(git remote add:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nFix: Add public/index.php front controller\n\n- Created public/index.php as entry point\n- Added public/.htaccess for URL rewriting\n- Fixed install.sh password_hash column name\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
     ]
   }
 }
