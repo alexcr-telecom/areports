@@ -21,9 +21,12 @@ storage/temp/*
 .DS_Store
 Thumbs.db
 
-# Composer (if used)
-vendor/
+# Composer (if used - root vendor folder)
+/vendor/
 composer.lock
+
+# Keep public vendor (frontend assets)
+!public/vendor/
 
 # Node (if used)
 node_modules/
