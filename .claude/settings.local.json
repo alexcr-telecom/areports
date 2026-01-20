@@ -30,7 +30,8 @@
       "Bash(mysqldump:*)",
       "Bash(ln:*)",
       "Bash(sudo chown:*)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(git remote set-url:*)"
     ]
   }
 }
