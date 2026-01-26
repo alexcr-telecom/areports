@@ -317,4 +317,19 @@ INSERT IGNORE INTO `pause_causes` (`code`, `name`, `is_billable`, `color_code`, 
 INSERT IGNORE INTO `api_keys` (`name`, `api_key`, `permissions`, `is_active`) VALUES
 ('Default API Key', 'areports_api_key_change_me_in_production', '["*"]', 1);
 
+-- --------------------------------------------
+-- User Queue Assignments
+-- Allows admin to assign specific queues to agents
+-- --------------------------------------------
+CREATE TABLE IF NOT EXISTS `user_queues` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT UNSIGNED NOT NULL,
+    `queue_name` VARCHAR(50) NOT NULL,
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY `uk_user_queue` (`user_id`, `queue_name`),
+    INDEX `idx_user` (`user_id`),
+    INDEX `idx_queue` (`queue_name`),
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 SET FOREIGN_KEY_CHECKS = 1;

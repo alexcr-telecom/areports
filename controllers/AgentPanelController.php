@@ -76,6 +76,18 @@ class AgentPanelController extends Controller
     }
 
     /**
+     * Get user's assigned queues from database
+     */
+    private function getUserAssignedQueues(): array
+    {
+        $queues = $this->db->fetchAll(
+            "SELECT queue_name FROM user_queues WHERE user_id = ?",
+            [$this->user['id']]
+        );
+        return array_column($queues, 'queue_name');
+    }
+
+    /**
      * Get real-time queue status for agent (AJAX)
      */
     public function status(): void
@@ -95,12 +107,21 @@ class AgentPanelController extends Controller
             // Get all queue statuses
             $queueStatus = $ami->getQueueStatus();
 
+            // Get user's assigned queues (if any)
+            $assignedQueues = $this->getUserAssignedQueues();
+
             // Find which queues the agent is in and their status
             $agentQueues = [];
             $interface = "Local/{$extension}@from-queue/n";
             $sipInterface = "PJSIP/{$extension}";
 
             foreach ($queueStatus as $queue) {
+                $queueName = $queue['name'] ?? $queue['queue'] ?? 'Unknown';
+
+                // If user has assigned queues, filter to only those
+                if (!empty($assignedQueues) && !in_array($queueName, $assignedQueues)) {
+                    continue;
+                }
                 $inQueue = false;
                 $paused = false;
                 $pausedReason = '';
@@ -344,9 +365,20 @@ class AgentPanelController extends Controller
             $ami = new AMIService();
             $interface = "Local/{$extension}@from-queue/n";
 
-            // Get all queues
+            // Get user's assigned queues
+            $assignedQueues = $this->getUserAssignedQueues();
+
+            // Get all queues from FreePBX
             $freepbxService = new FreePBXService();
-            $queues = $freepbxService->getQueues();
+            $allQueues = $freepbxService->getQueues();
+
+            // Filter to only assigned queues if any
+            $queues = $allQueues;
+            if (!empty($assignedQueues)) {
+                $queues = array_filter($allQueues, function($q) use ($assignedQueues) {
+                    return in_array($q['extension'], $assignedQueues);
+                });
+            }
 
             $loggedIn = 0;
             $errors = [];
@@ -393,9 +425,20 @@ class AgentPanelController extends Controller
             $ami = new AMIService();
             $interface = "Local/{$extension}@from-queue/n";
 
-            // Get all queues
+            // Get user's assigned queues
+            $assignedQueues = $this->getUserAssignedQueues();
+
+            // Get all queues from FreePBX
             $freepbxService = new FreePBXService();
-            $queues = $freepbxService->getQueues();
+            $allQueues = $freepbxService->getQueues();
+
+            // Filter to only assigned queues if any
+            $queues = $allQueues;
+            if (!empty($assignedQueues)) {
+                $queues = array_filter($allQueues, function($q) use ($assignedQueues) {
+                    return in_array($q['extension'], $assignedQueues);
+                });
+            }
 
             $loggedOut = 0;
             $errors = [];

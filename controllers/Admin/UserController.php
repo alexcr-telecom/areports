@@ -41,15 +41,18 @@ class UserController extends Controller
 
         $roles = $this->db->fetchAll("SELECT * FROM roles ORDER BY id");
 
-        // Get FreePBX extensions
+        // Get FreePBX extensions and queues
         $freepbxService = new FreePBXService();
         $extensions = $freepbxService->getExtensions();
+        $queues = $freepbxService->getQueues();
 
         $this->render('admin/users/create', [
             'title' => 'Create User',
             'currentPage' => 'admin.users',
             'roles' => $roles,
-            'extensions' => $extensions
+            'extensions' => $extensions,
+            'queues' => $queues,
+            'userQueues' => []
         ]);
     }
 
@@ -83,9 +86,19 @@ class UserController extends Controller
         // Create user preferences
         $this->db->insert('user_preferences', ['user_id' => $userId]);
 
+        // Save queue assignments
+        $queues = $_POST['queues'] ?? [];
+        foreach ($queues as $queueName) {
+            $this->db->insert('user_queues', [
+                'user_id' => $userId,
+                'queue_name' => $queueName
+            ]);
+        }
+
         $this->audit('create', 'user', $userId, null, [
             'username' => $data['username'],
-            'email' => $data['email']
+            'email' => $data['email'],
+            'queues' => $queues
         ]);
 
         $this->redirectWith('/areports/admin/users', 'success', 'User created successfully.');
@@ -117,16 +130,26 @@ class UserController extends Controller
         $user = $this->getUser($id);
         $roles = $this->db->fetchAll("SELECT * FROM roles ORDER BY id");
 
-        // Get FreePBX extensions
+        // Get FreePBX extensions and queues
         $freepbxService = new FreePBXService();
         $extensions = $freepbxService->getExtensions();
+        $queues = $freepbxService->getQueues();
+
+        // Get user's assigned queues
+        $userQueues = $this->db->fetchAll(
+            "SELECT queue_name FROM user_queues WHERE user_id = ?",
+            [$id]
+        );
+        $userQueues = array_column($userQueues, 'queue_name');
 
         $this->render('admin/users/edit', [
             'title' => 'Edit User',
             'currentPage' => 'admin.users',
             'user' => $user,
             'roles' => $roles,
-            'extensions' => $extensions
+            'extensions' => $extensions,
+            'queues' => $queues,
+            'userQueues' => $userQueues
         ]);
     }
 
@@ -168,12 +191,23 @@ class UserController extends Controller
 
         $this->db->update('users', $updateData, ['id' => $id]);
 
+        // Update queue assignments
+        $this->db->delete('user_queues', ['user_id' => $id]);
+        $queues = $_POST['queues'] ?? [];
+        foreach ($queues as $queueName) {
+            $this->db->insert('user_queues', [
+                'user_id' => $id,
+                'queue_name' => $queueName
+            ]);
+        }
+
         $this->audit('update', 'user', $id, [
             'email' => $user['email'],
             'role_id' => $user['role_id']
         ], [
             'email' => $data['email'],
-            'role_id' => $data['role_id']
+            'role_id' => $data['role_id'],
+            'queues' => $queues
         ]);
 
         $this->redirectWith('/areports/admin/users', 'success', 'User updated successfully.');

@@ -59,7 +59,7 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label">Role <span class="text-danger">*</span></label>
-                            <select class="form-select" name="role_id" required>
+                            <select class="form-select" name="role_id" required id="role_id">
                                 <?php foreach ($roles as $role): ?>
                                 <option value="<?= $role['id'] ?>" <?= $user['role_id'] == $role['id'] ? 'selected' : '' ?>>
                                     <?= $this->e($role['display_name']) ?>
@@ -79,6 +79,30 @@
                                 <?php endforeach; ?>
                             </select>
                         </div>
+                    </div>
+
+                    <!-- Queue Assignment (for Agents) -->
+                    <div class="mb-3" id="queue-assignment-section">
+                        <label class="form-label">Assigned Queues</label>
+                        <div class="form-text mb-2">Select which queues this agent can login to</div>
+                        <div class="row">
+                            <?php foreach ($queues as $queue): ?>
+                            <div class="col-md-4 mb-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="queues[]"
+                                           value="<?= $this->e($queue['extension']) ?>"
+                                           id="queue_<?= $this->e($queue['extension']) ?>"
+                                           <?= in_array($queue['extension'], $userQueues ?? []) ? 'checked' : '' ?>>
+                                    <label class="form-check-label" for="queue_<?= $this->e($queue['extension']) ?>">
+                                        <?= $this->e($queue['extension']) ?> - <?= $this->e($queue['name']) ?>
+                                    </label>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <?php if (empty($queues)): ?>
+                        <p class="text-muted">No queues found in FreePBX</p>
+                        <?php endif; ?>
                     </div>
 
                     <div class="d-flex gap-2">
