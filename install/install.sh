@@ -320,8 +320,11 @@ create_database() {
 
     # Create database and user with all required permissions
     mysql -h "$DB_HOST" -u root -p"$MYSQL_ROOT_PASS" <<EOF
+-- Drop existing database if exists (fresh install)
+DROP DATABASE IF EXISTS \`$DB_NAME\`;
+
 -- Create aReports database
-CREATE DATABASE IF NOT EXISTS \`$DB_NAME\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE \`$DB_NAME\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- Create or update user
 CREATE USER IF NOT EXISTS '$DB_USER'@'localhost' IDENTIFIED BY '$DB_PASS';
@@ -495,45 +498,39 @@ create_config() {
 
 return [
     // Main aReports database
-    'default' => [
-        'driver' => 'mysql',
+    'areports' => [
         'host' => '$DB_HOST',
         'port' => 3306,
         'database' => '$DB_NAME',
         'username' => '$DB_USER',
         'password' => '$DB_PASS',
         'charset' => 'utf8mb4',
-        'collation' => 'utf8mb4_unicode_ci',
     ],
 
     // Asterisk CDR database
     'asteriskcdrdb' => [
-        'driver' => 'mysql',
         'host' => '$FREEPBX_DB_HOST',
         'port' => 3306,
         'database' => '$CDR_DB_NAME',
         'username' => '$DB_USER',
         'password' => '$DB_PASS',
         'charset' => 'utf8mb4',
-        'collation' => 'utf8mb4_unicode_ci',
     ],
 
     // FreePBX database
     'freepbx' => [
-        'driver' => 'mysql',
         'host' => '$FREEPBX_DB_HOST',
         'port' => 3306,
         'database' => '$FREEPBX_DB_NAME',
         'username' => '$DB_USER',
         'password' => '$DB_PASS',
         'charset' => 'utf8mb4',
-        'collation' => 'utf8mb4_unicode_ci',
     ],
 ];
 EOF
 
     chmod 640 "$DB_CONFIG_FILE"
-    chown $APACHE_USER:$APACHE_GROUP "$DB_CONFIG_FILE"
+    chown $APACHE_USER:$APACHE_GROUP "$DB_CONFIG_FILE" 2>/dev/null || true
     log_info "Database config created: $DB_CONFIG_FILE"
 
     # Create ami.php config
@@ -556,7 +553,7 @@ return [
 EOF
 
     chmod 640 "$AMI_CONFIG_FILE"
-    chown $APACHE_USER:$APACHE_GROUP "$AMI_CONFIG_FILE"
+    chown $APACHE_USER:$APACHE_GROUP "$AMI_CONFIG_FILE" 2>/dev/null || true
     log_info "AMI config created: $AMI_CONFIG_FILE"
 
     # Update app.php debug setting

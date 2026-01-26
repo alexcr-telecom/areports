@@ -1,0 +1,39 @@
+<?php
+/**
+ * Database Configuration
+ *
+ * Copy this file to database.php and update with your credentials:
+ *   cp database.php.example database.php
+ */
+
+return [
+    // aReports application database
+    'areports' => [
+        'host' => 'localhost',
+        'port' => 3306,
+        'database' => 'areports',
+        'username' => 'areports',
+        'password' => 'YOUR_PASSWORD_HERE',
+        'charset' => 'utf8mb4',
+    ],
+
+    // Asterisk CDR database (read-only access)
+    'asteriskcdrdb' => [
+        'host' => 'localhost',
+        'port' => 3306,
+        'database' => 'asteriskcdrdb',
+        'username' => 'areports',
+        'password' => 'YOUR_PASSWORD_HERE',
+        'charset' => 'utf8mb4',
+    ],
+
+    // FreePBX asterisk database (read-only for extensions/queues)
+    'freepbx' => [
+        'host' => 'localhost',
+        'port' => 3306,
+        'database' => 'asterisk',
+        'username' => 'areports',
+        'password' => 'YOUR_PASSWORD_HERE',
+        'charset' => 'utf8mb4',
+    ],
+];

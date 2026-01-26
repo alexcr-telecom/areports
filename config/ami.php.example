@@ -1,0 +1,18 @@
+<?php
+/**
+ * Asterisk Manager Interface Configuration
+ *
+ * Copy this file to ami.php and update with your credentials:
+ *   cp ami.php.example ami.php
+ *
+ * AMI user should be configured in /etc/asterisk/manager_custom.conf
+ */
+
+return [
+    'host' => '127.0.0.1',
+    'port' => 5038,
+    'username' => 'areports',
+    'secret' => 'YOUR_AMI_SECRET_HERE',
+    'connect_timeout' => 5,
+    'read_timeout' => 5,
+];
