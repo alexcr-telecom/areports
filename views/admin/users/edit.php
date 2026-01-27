@@ -38,8 +38,8 @@
                             <div class="form-text">Username cannot be changed</div>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Email <span class="text-danger">*</span></label>
-                            <input type="email" class="form-control" name="email" required
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email"
                                    value="<?= $this->e($user['email']) ?>">
                         </div>
                     </div>

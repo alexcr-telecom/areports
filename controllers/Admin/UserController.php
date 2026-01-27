@@ -65,7 +65,7 @@ class UserController extends Controller
 
         $data = $this->validate($_POST, [
             'username' => 'required|min:3|max:50|unique:users,username',
-            'email' => 'required|email|unique:users,email',
+            'email' => 'email|unique:users,email',
             'password' => 'required|min:8|confirmed',
             'first_name' => 'required|max:50',
             'last_name' => 'required|max:50',
@@ -163,7 +163,7 @@ class UserController extends Controller
         $user = $this->getUser($id);
 
         $rules = [
-            'email' => 'required|email|unique:users,email,' . $id,
+            'email' => 'email|unique:users,email,' . $id,
             'first_name' => 'required|max:50',
             'last_name' => 'required|max:50',
             'role_id' => 'required|exists:roles,id'
