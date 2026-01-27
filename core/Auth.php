@@ -270,12 +270,25 @@ class Auth
     }
 
     /**
+     * Get security config values
+     */
+    private function getSecurityConfig(): array
+    {
+        $config = require dirname(__DIR__) . '/config/app.php';
+        return $config['security'] ?? [
+            'max_login_attempts' => 10,
+            'lockout_duration' => 60,
+        ];
+    }
+
+    /**
      * Check if login attempts are rate limited
      */
     private function isRateLimited(string $username): bool
     {
-        $maxAttempts = 10;
-        $lockoutDuration = 60; // 1 minute
+        $security = $this->getSecurityConfig();
+        $maxAttempts = $security['max_login_attempts'] ?? 10;
+        $lockoutDuration = $security['lockout_duration'] ?? 60;
 
         $sql = "SELECT COUNT(*) FROM login_attempts
                 WHERE username = ?
@@ -304,7 +317,8 @@ class Auth
      */
     public function getLockoutTime(string $username): int
     {
-        $lockoutDuration = 60; // 1 minute
+        $security = $this->getSecurityConfig();
+        $lockoutDuration = $security['lockout_duration'] ?? 60;
 
         $sql = "SELECT MAX(attempted_at) as last_attempt FROM login_attempts
                 WHERE username = ? AND success = 0";
